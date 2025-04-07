@@ -6,15 +6,23 @@ local buttonState = true
 -- Startfarbe setzen
 button:setColor(0, 1, 0, 0.3) -- Grün
 
--- Callback hinzufügen
-button:addCallback("onClick", function()
-    buttonState = not buttonState
+local panels = component.proxy(component.findComponent(classes.LargeControlPanel))
+local lights = component.proxy(component.findComponent(classes.LightSource))
 
-    if buttonState then
-        button:setColor(0, 1, 0, 0.3) -- Grün
-        print("Button aktiviert")
-    else
-        button:setColor(1, 0, 0, 0.3) -- Rot
-        print("Button deaktiviert")
+local panel = panels[1]
+local light = lights[1]
+
+-- The switch is expected to be in the middle of the panel
+local switch = panel:getModule(5, 5, 0)
+
+event.ignoreAll()
+event.clear()
+
+event.listen(switch)
+
+while true do
+    local e, s = event.pull()
+    if s == switch and e == "ChangeState" then
+        light.isLightEnabled = s.state
     end
-end)
+end
